@@ -14,12 +14,10 @@ export const NavBar: React.FC<Props> = () => {
     body = (
       <>
         <NextLink href='/login'>
-          <Link mr={2} color='white'>
-            login
-          </Link>
+          <Link mr={2}>login</Link>
         </NextLink>
         <NextLink href='/register'>
-          <Link color='white'>register</Link>
+          <Link>register</Link>
         </NextLink>
       </>
     )
@@ -27,14 +25,12 @@ export const NavBar: React.FC<Props> = () => {
     body = (
       <Flex>
         <Box mr={2}>{data.currentUser.email}</Box>
-        <Button variant='link' color='white'>
-          logout
-        </Button>
+        <Button variant='link'>logout</Button>
       </Flex>
     )
   }
   return (
-    <Flex bg='tomato' p={4}>
+    <Flex bg='tan' p={4}>
       <Box ml='auto'>{body}</Box>
     </Flex>
   )
