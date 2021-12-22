@@ -5,8 +5,7 @@ mutation Register($options: EmailPasswordInput!) {
       message
     }
     user {
-      id
-      email
+      ...BaseUser
     }
   }
 }
