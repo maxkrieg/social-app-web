@@ -30,6 +30,7 @@ export type Mutation = {
   createPost: Post
   deletePost: Scalars['Boolean']
   login: UserResponse
+  logout: Scalars['Boolean']
   register: UserResponse
   updatePost?: Maybe<Post>
 }
@@ -89,6 +90,8 @@ export type UserResponse = {
   user?: Maybe<User>
 }
 
+export type BaseUserFragment = { __typename?: 'User'; id: string; email: string }
+
 export type LoginMutationVariables = Exact<{
   options: EmailPasswordInput
 }>
@@ -101,6 +104,10 @@ export type LoginMutation = {
     user?: { __typename?: 'User'; id: string; email: string } | null | undefined
   }
 }
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never }>
+
+export type LogoutMutation = { __typename?: 'Mutation'; logout: boolean }
 
 export type RegisterMutationVariables = Exact<{
   options: EmailPasswordInput
@@ -122,6 +129,12 @@ export type CurrentUserQuery = {
   currentUser?: { __typename?: 'User'; id: string; email: string } | null | undefined
 }
 
+export const BaseUserFragmentDoc = gql`
+  fragment BaseUser on User {
+    id
+    email
+  }
+`
 export const LoginDocument = gql`
   mutation Login($options: EmailPasswordInput!) {
     login(options: $options) {
@@ -130,15 +143,24 @@ export const LoginDocument = gql`
         message
       }
       user {
-        id
-        email
+        ...BaseUser
       }
     }
   }
+  ${BaseUserFragmentDoc}
 `
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument)
+}
+export const LogoutDocument = gql`
+  mutation Logout {
+    logout
+  }
+`
+
+export function useLogoutMutation() {
+  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument)
 }
 export const RegisterDocument = gql`
   mutation Register($options: EmailPasswordInput!) {
@@ -148,11 +170,11 @@ export const RegisterDocument = gql`
         message
       }
       user {
-        id
-        email
+        ...BaseUser
       }
     }
   }
+  ${BaseUserFragmentDoc}
 `
 
 export function useRegisterMutation() {
@@ -161,10 +183,10 @@ export function useRegisterMutation() {
 export const CurrentUserDocument = gql`
   query CurrentUser {
     currentUser {
-      id
-      email
+      ...BaseUser
     }
   }
+  ${BaseUserFragmentDoc}
 `
 
 export function useCurrentUserQuery(
