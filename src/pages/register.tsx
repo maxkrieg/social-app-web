@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button } from '@chakra-ui/react'
+import { Box, Button, Heading } from '@chakra-ui/react'
 import { Form, Formik } from 'formik'
 import { withUrqlClient } from 'next-urql'
 import { useRouter } from 'next/router'
@@ -16,6 +16,9 @@ const Register: React.FC<Props> = () => {
   const [_, register] = useRegisterMutation()
   return (
     <Wrapper variant='small'>
+      <Heading size='lg' mb={4}>
+        Register
+      </Heading>
       <Formik
         initialValues={{ email: '', password: '' }}
         onSubmit={async (values, { setErrors }) => {
