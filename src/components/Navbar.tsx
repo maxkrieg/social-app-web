@@ -8,12 +8,9 @@ interface Props {}
 
 export const NavBar: React.FC<Props> = () => {
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation()
-  console.log({ isServer: isServer() })
   const [{ data, fetching }] = useCurrentUserQuery({
     pause: isServer()
   })
-
-  console.log({ data })
 
   const handleLogout = () => {
     logout()
