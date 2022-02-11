@@ -95,6 +95,11 @@ export type QueryPostArgs = {
   id: Scalars['ID']
 }
 
+export type QueryPostsArgs = {
+  cursor?: Maybe<Scalars['String']>
+  limit: Scalars['Int']
+}
+
 export type User = {
   __typename?: 'User'
   createdAt: Scalars['String']
@@ -198,7 +203,10 @@ export type CurrentUserQuery = {
   currentUser?: { __typename?: 'User'; id: string; email: string } | null | undefined
 }
 
-export type PostsQueryVariables = Exact<{ [key: string]: never }>
+export type PostsQueryVariables = Exact<{
+  limit: Scalars['Int']
+  cursor?: Maybe<Scalars['String']>
+}>
 
 export type PostsQuery = {
   __typename?: 'Query'
@@ -327,8 +335,8 @@ export function useCurrentUserQuery(
   return Urql.useQuery<CurrentUserQuery>({ query: CurrentUserDocument, ...options })
 }
 export const PostsDocument = gql`
-  query Posts {
-    posts {
+  query Posts($limit: Int!, $cursor: String) {
+    posts(limit: $limit, cursor: $cursor) {
       id
       createdAt
       updatedAt
