@@ -1,36 +1,48 @@
 import React from 'react'
-import { Link, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
-import { withUrqlClient } from 'next-urql'
 import NextLink from 'next/link'
+import { Box, Button, Flex, Heading, Link, Stack, Text } from '@chakra-ui/react'
+import { withUrqlClient } from 'next-urql'
+
 import Layout from '../components/Layout'
 import { usePostsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 
 const Index = () => {
-  const [{ data }] = usePostsQuery({ variables: { limit: 30 } })
+  const [{ data, fetching }] = usePostsQuery({ variables: { limit: 30 } })
+
+  if (!fetching && !data) {
+    return <div>Error getting posts</div>
+  }
   return (
     <Layout>
-      <NextLink href='/create-post'>
-        <Link>Create Post</Link>
-      </NextLink>
+      <Flex align='center'>
+        <Heading>Social App</Heading>
+        <NextLink href='/create-post'>
+          <Link ml='auto'>+ create post</Link>
+        </NextLink>
+      </Flex>
       <div style={{ height: '50px' }} />
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Title</Th>
-            <Th>Created</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data &&
-            data.posts.map(post => (
-              <Tr id={post.id} key={post.id}>
-                <Td>{post.title}</Td>
-                <Td>{new Date(parseInt(post.createdAt)).toLocaleString()}</Td>
-              </Tr>
+      {!data && fetching && <div>loading...</div>}
+      {data && (
+        <>
+          <Stack>
+            {data.posts.map(post => (
+              <Box key={post.id} p={5} shadow='md' borderWidth='1px'>
+                <Heading fontSize='xl'>{post.title}</Heading>
+                <Text mt={4}>{post.textSnippet}</Text>
+                <Text mt={4} fontSize={12}>
+                  {new Date(parseInt(post.createdAt)).toLocaleString()}
+                </Text>
+              </Box>
             ))}
-        </Tbody>
-      </Table>
+          </Stack>
+          <Flex>
+            <Button isLoading={fetching} m='auto' my={8}>
+              Load more
+            </Button>
+          </Flex>
+        </>
+      )}
     </Layout>
   )
 }
