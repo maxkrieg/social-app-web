@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import NextLink from 'next/link'
 import { Box, Button, Flex, Heading, Link, Stack, Text } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
@@ -8,7 +8,11 @@ import { usePostsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 
 const Index = () => {
-  const [{ data, fetching }] = usePostsQuery({ variables: { limit: 30 } })
+  const [queryVariables, setQueryVariables] = useState({
+    limit: 10,
+    cursor: null as string | null
+  })
+  const [{ data, fetching }] = usePostsQuery({ variables: queryVariables })
 
   if (!fetching && !data) {
     return <div>Error getting posts</div>
@@ -37,8 +41,19 @@ const Index = () => {
             ))}
           </Stack>
           <Flex>
-            <Button isLoading={fetching} m='auto' my={8}>
-              Load more
+            <Button
+              onClick={() => {
+                setQueryVariables({
+                  limit: queryVariables.limit,
+                  cursor: data.posts[data.posts.length - 1].createdAt
+                })
+              }}
+              isLoading={fetching}
+              m='auto'
+              my={8}
+              variantColor='teal'
+            >
+              load more
             </Button>
           </Flex>
         </>

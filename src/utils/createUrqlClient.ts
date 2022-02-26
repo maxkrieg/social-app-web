@@ -1,7 +1,7 @@
 import { devtoolsExchange } from '@urql/devtools'
-import { cacheExchange } from '@urql/exchange-graphcache'
+import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
 import Router from 'next/router'
-import { dedupExchange, Exchange, fetchExchange } from 'urql'
+import { dedupExchange, Exchange, fetchExchange, stringifyVariables } from 'urql'
 import { pipe, tap } from 'wonka'
 import {
   CurrentUserDocument,
@@ -25,12 +25,42 @@ const errorExchange: Exchange =
     )
   }
 
+const cursorPagination = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info
+    const allFields = cache.inspectFields(entityKey)
+    console.log('allFields: ', allFields)
+    const fieldInfos = allFields.filter(info => info.fieldName === fieldName)
+    const size = fieldInfos.length
+    if (size === 0) {
+      return undefined
+    }
+
+    const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`
+    const isItInTheCache = cache.resolve(entityKey, fieldKey)
+    info.partial = !isItInTheCache
+    const results: string[] = []
+    fieldInfos.forEach(fi => {
+      const data = cache.resolve(entityKey, fi.fieldKey) as string[]
+      console.log('data: ', data)
+      results.push(...data)
+    })
+
+    return results
+  }
+}
+
 export const createUrqlClient = (ssrExchange: any) => ({
   url: 'http://localhost:4000/graphql',
   exchanges: [
     devtoolsExchange,
     dedupExchange,
     cacheExchange({
+      resolvers: {
+        Query: {
+          posts: cursorPagination()
+        }
+      },
       updates: {
         Mutation: {
           login: (queryResult, _args, cache, _info) => {
