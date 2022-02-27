@@ -9,7 +9,7 @@ import { createUrqlClient } from '../utils/createUrqlClient'
 
 const Index = () => {
   const [queryVariables, setQueryVariables] = useState({
-    limit: 10,
+    limit: 20,
     cursor: null as string | null
   })
   const [{ data, fetching }] = usePostsQuery({ variables: queryVariables })
@@ -30,7 +30,7 @@ const Index = () => {
       {data && (
         <>
           <Stack>
-            {data.posts.map(post => (
+            {data.posts.posts.map(post => (
               <Box key={post.id} p={5} shadow='md' borderWidth='1px'>
                 <Heading fontSize='xl'>{post.title}</Heading>
                 <Text mt={4}>{post.textSnippet}</Text>
@@ -40,22 +40,24 @@ const Index = () => {
               </Box>
             ))}
           </Stack>
-          <Flex>
-            <Button
-              onClick={() => {
-                setQueryVariables({
-                  limit: queryVariables.limit,
-                  cursor: data.posts[data.posts.length - 1].createdAt
-                })
-              }}
-              isLoading={fetching}
-              m='auto'
-              my={8}
-              variantColor='teal'
-            >
-              load more
-            </Button>
-          </Flex>
+          {data && data.posts.hasMore && (
+            <Flex>
+              <Button
+                onClick={() => {
+                  setQueryVariables({
+                    limit: queryVariables.limit,
+                    cursor: data.posts.posts[data.posts.posts.length - 1].createdAt
+                  })
+                }}
+                isLoading={fetching}
+                m='auto'
+                my={8}
+                variantColor='teal'
+              >
+                load more
+              </Button>
+            </Flex>
+          )}
         </>
       )}
     </Layout>
