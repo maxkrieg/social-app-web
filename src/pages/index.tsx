@@ -34,6 +34,7 @@ const Index = () => {
               <Box key={post.id} p={5} shadow='md' borderWidth='1px'>
                 <Heading fontSize='xl'>{post.title}</Heading>
                 <Text mt={4}>{post.textSnippet}</Text>
+                <Text mt={4}>{post.user.username}</Text>
                 <Text mt={4} fontSize={12}>
                   {new Date(parseInt(post.createdAt)).toLocaleString()}
                 </Text>
