@@ -1,4 +1,4 @@
-mutation Login($options: EmailPasswordInput!) {
+mutation Login($options: LoginInput!) {
   login(options: $options) {
     ...BaseUserResponse
   }

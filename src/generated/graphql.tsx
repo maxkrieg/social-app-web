@@ -14,15 +14,15 @@ export type Scalars = {
   Float: number
 }
 
-export type EmailPasswordInput = {
-  email: Scalars['String']
-  password: Scalars['String']
-}
-
 export type FieldError = {
   __typename?: 'FieldError'
   field: Scalars['String']
   message: Scalars['String']
+}
+
+export type LoginInput = {
+  email: Scalars['String']
+  password: Scalars['String']
 }
 
 export type Mutation = {
@@ -55,11 +55,11 @@ export type MutationForgotPasswordArgs = {
 }
 
 export type MutationLoginArgs = {
-  options: EmailPasswordInput
+  options: LoginInput
 }
 
 export type MutationRegisterArgs = {
-  options: EmailPasswordInput
+  options: RegisterInput
 }
 
 export type MutationUpdatePostArgs = {
@@ -107,6 +107,12 @@ export type QueryPostsArgs = {
   limit: Scalars['Int']
 }
 
+export type RegisterInput = {
+  email: Scalars['String']
+  password: Scalars['String']
+  username: Scalars['String']
+}
+
 export type User = {
   __typename?: 'User'
   createdAt: Scalars['String']
@@ -114,6 +120,7 @@ export type User = {
   id: Scalars['ID']
   posts: Array<Post>
   updatedAt: Scalars['String']
+  username: Scalars['String']
 }
 
 export type UserResponse = {
@@ -124,12 +131,12 @@ export type UserResponse = {
 
 export type BaseErrorsFragment = { __typename?: 'FieldError'; field: string; message: string }
 
-export type BaseUserFragment = { __typename?: 'User'; id: string; email: string }
+export type BaseUserFragment = { __typename?: 'User'; id: string; email: string; username: string }
 
 export type BaseUserResponseFragment = {
   __typename?: 'UserResponse'
   errors?: Array<{ __typename?: 'FieldError'; field: string; message: string }> | null | undefined
-  user?: { __typename?: 'User'; id: string; email: string } | null | undefined
+  user?: { __typename?: 'User'; id: string; email: string; username: string } | null | undefined
 }
 
 export type ChangePasswordMutationVariables = Exact<{
@@ -142,7 +149,7 @@ export type ChangePasswordMutation = {
   changePassword: {
     __typename?: 'UserResponse'
     errors?: Array<{ __typename?: 'FieldError'; field: string; message: string }> | null | undefined
-    user?: { __typename?: 'User'; id: string; email: string } | null | undefined
+    user?: { __typename?: 'User'; id: string; email: string; username: string } | null | undefined
   }
 }
 
@@ -174,7 +181,7 @@ export type ForgotPasswordMutationVariables = Exact<{
 export type ForgotPasswordMutation = { __typename?: 'Mutation'; forgotPassword: boolean }
 
 export type LoginMutationVariables = Exact<{
-  options: EmailPasswordInput
+  options: LoginInput
 }>
 
 export type LoginMutation = {
@@ -182,7 +189,7 @@ export type LoginMutation = {
   login: {
     __typename?: 'UserResponse'
     errors?: Array<{ __typename?: 'FieldError'; field: string; message: string }> | null | undefined
-    user?: { __typename?: 'User'; id: string; email: string } | null | undefined
+    user?: { __typename?: 'User'; id: string; email: string; username: string } | null | undefined
   }
 }
 
@@ -191,7 +198,7 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never }>
 export type LogoutMutation = { __typename?: 'Mutation'; logout: boolean }
 
 export type RegisterMutationVariables = Exact<{
-  options: EmailPasswordInput
+  options: RegisterInput
 }>
 
 export type RegisterMutation = {
@@ -199,7 +206,7 @@ export type RegisterMutation = {
   register: {
     __typename?: 'UserResponse'
     errors?: Array<{ __typename?: 'FieldError'; field: string; message: string }> | null | undefined
-    user?: { __typename?: 'User'; id: string; email: string } | null | undefined
+    user?: { __typename?: 'User'; id: string; email: string; username: string } | null | undefined
   }
 }
 
@@ -207,7 +214,10 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 
 export type CurrentUserQuery = {
   __typename?: 'Query'
-  currentUser?: { __typename?: 'User'; id: string; email: string } | null | undefined
+  currentUser?:
+    | { __typename?: 'User'; id: string; email: string; username: string }
+    | null
+    | undefined
 }
 
 export type PostsQueryVariables = Exact<{
@@ -241,6 +251,7 @@ export const BaseUserFragmentDoc = gql`
   fragment BaseUser on User {
     id
     email
+    username
   }
 `
 export const BaseUserResponseFragmentDoc = gql`
@@ -300,7 +311,7 @@ export function useForgotPasswordMutation() {
   )
 }
 export const LoginDocument = gql`
-  mutation Login($options: EmailPasswordInput!) {
+  mutation Login($options: LoginInput!) {
     login(options: $options) {
       ...BaseUserResponse
     }
@@ -321,7 +332,7 @@ export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument)
 }
 export const RegisterDocument = gql`
-  mutation Register($options: EmailPasswordInput!) {
+  mutation Register($options: RegisterInput!) {
     register(options: $options) {
       ...BaseUserResponse
     }

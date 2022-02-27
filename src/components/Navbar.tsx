@@ -33,7 +33,7 @@ export const NavBar: React.FC<Props> = () => {
   } else {
     body = (
       <Flex>
-        <Box mr={2}>{data.currentUser.email}</Box>
+        <Box mr={2}>{data.currentUser.username}</Box>
         <Button variant='link' onClick={handleLogout} isLoading={logoutFetching}>
           logout
         </Button>
