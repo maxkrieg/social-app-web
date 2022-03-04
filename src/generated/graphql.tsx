@@ -35,6 +35,7 @@ export type Mutation = {
   logout: Scalars['Boolean']
   register: UserResponse
   updatePost?: Maybe<Post>
+  vote: Scalars['Boolean']
 }
 
 export type MutationChangePasswordArgs = {
@@ -67,6 +68,11 @@ export type MutationUpdatePostArgs = {
   title: Scalars['String']
 }
 
+export type MutationVoteArgs = {
+  postId: Scalars['ID']
+  value: Scalars['Int']
+}
+
 export type PaginatedPosts = {
   __typename?: 'PaginatedPosts'
   hasMore: Scalars['Boolean']
@@ -83,6 +89,7 @@ export type Post = {
   title: Scalars['String']
   updatedAt: Scalars['String']
   user: User
+  userId: Scalars['Float']
 }
 
 export type PostInput = {
@@ -237,7 +244,7 @@ export type PostsQuery = {
       updatedAt: string
       title: string
       textSnippet: string
-      user: { __typename?: 'User'; username: string }
+      user: { __typename?: 'User'; id: string; username: string }
     }>
   }
 }
@@ -368,6 +375,7 @@ export const PostsDocument = gql`
         title
         textSnippet
         user {
+          id
           username
         }
       }

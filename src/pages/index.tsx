@@ -9,7 +9,7 @@ import { createUrqlClient } from '../utils/createUrqlClient'
 
 const Index = () => {
   const [queryVariables, setQueryVariables] = useState({
-    limit: 20,
+    limit: 15,
     cursor: null as string | null
   })
   const [{ data, fetching }] = usePostsQuery({ variables: queryVariables })
@@ -34,7 +34,7 @@ const Index = () => {
               <Box key={post.id} p={5} shadow='md' borderWidth='1px'>
                 <Heading fontSize='xl'>{post.title}</Heading>
                 <Text mt={4}>{post.textSnippet}</Text>
-                <Text mt={4}>{post.user.username}</Text>
+                <Text mt={4}>posted by {post.user.username}</Text>
                 <Text mt={4} fontSize={12}>
                   {new Date(parseInt(post.createdAt)).toLocaleString()}
                 </Text>
