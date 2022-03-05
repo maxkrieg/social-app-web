@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import NextLink from 'next/link'
-import { Box, Button, Flex, Heading, Link, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, IconButton, Link, Stack, Text } from '@chakra-ui/react'
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
 import { withUrqlClient } from 'next-urql'
 
 import Layout from '../components/Layout'
 import { usePostsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
+import { UpvoteSection } from '../components/UpvoteSection'
 
 const Index = () => {
   const [queryVariables, setQueryVariables] = useState({
@@ -33,11 +34,7 @@ const Index = () => {
           <Stack>
             {data.posts.posts.map(post => (
               <Flex key={post.id} p={5} shadow='md' borderWidth='1px'>
-                <Flex alignItems='center' flexDirection='column' justifyContent='center' mr={4}>
-                  <ChevronUpIcon boxSize={8} />
-                  {post.points}
-                  <ChevronDownIcon boxSize={8} />
-                </Flex>
+                <UpvoteSection post={post} />
                 <Box>
                   <Heading fontSize='xl'>{post.title}</Heading>
                   <Text mt={4}>{post.textSnippet}</Text>

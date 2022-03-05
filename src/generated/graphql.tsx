@@ -146,6 +146,17 @@ export type BaseUserResponseFragment = {
   user?: { __typename?: 'User'; id: string; email: string; username: string } | null | undefined
 }
 
+export type PostSnippetFragment = {
+  __typename?: 'Post'
+  id: string
+  createdAt: string
+  updatedAt: string
+  title: string
+  textSnippet: string
+  points: number
+  user: { __typename?: 'User'; id: string; username: string }
+}
+
 export type ChangePasswordMutationVariables = Exact<{
   token: Scalars['String']
   newPassword: Scalars['String']
@@ -217,6 +228,13 @@ export type RegisterMutation = {
   }
 }
 
+export type VoteMutationVariables = Exact<{
+  value: Scalars['Int']
+  postId: Scalars['ID']
+}>
+
+export type VoteMutation = { __typename?: 'Mutation'; vote: boolean }
+
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 
 export type CurrentUserQuery = {
@@ -274,6 +292,20 @@ export const BaseUserResponseFragmentDoc = gql`
   }
   ${BaseErrorsFragmentDoc}
   ${BaseUserFragmentDoc}
+`
+export const PostSnippetFragmentDoc = gql`
+  fragment PostSnippet on Post {
+    id
+    createdAt
+    updatedAt
+    title
+    textSnippet
+    points
+    user {
+      id
+      username
+    }
+  }
 `
 export const ChangePasswordDocument = gql`
   mutation ChangePassword($token: String!, $newPassword: String!) {
@@ -352,6 +384,15 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument)
 }
+export const VoteDocument = gql`
+  mutation Vote($value: Int!, $postId: ID!) {
+    vote(value: $value, postId: $postId)
+  }
+`
+
+export function useVoteMutation() {
+  return Urql.useMutation<VoteMutation, VoteMutationVariables>(VoteDocument)
+}
 export const CurrentUserDocument = gql`
   query CurrentUser {
     currentUser {
@@ -370,20 +411,12 @@ export const PostsDocument = gql`
   query Posts($limit: Int!, $cursor: String) {
     posts(limit: $limit, cursor: $cursor) {
       posts {
-        id
-        createdAt
-        updatedAt
-        title
-        textSnippet
-        points
-        user {
-          id
-          username
-        }
+        ...PostSnippet
       }
       hasMore
     }
   }
+  ${PostSnippetFragmentDoc}
 `
 
 export function usePostsQuery(options: Omit<Urql.UseQueryArgs<PostsQueryVariables>, 'query'> = {}) {
