@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import NextLink from 'next/link'
-import { Box, Button, Flex, Heading, IconButton, Link, Stack, Text } from '@chakra-ui/react'
-import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
+import { Box, Button, Flex, Heading, Link, Stack, Text } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
 
 import Layout from '../components/Layout'
