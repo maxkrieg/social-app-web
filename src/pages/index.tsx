@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import NextLink from 'next/link'
 import { Box, Button, Flex, Heading, Link, Stack, Text } from '@chakra-ui/react'
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons'
 import { withUrqlClient } from 'next-urql'
 
 import Layout from '../components/Layout'
@@ -31,14 +32,21 @@ const Index = () => {
         <>
           <Stack>
             {data.posts.posts.map(post => (
-              <Box key={post.id} p={5} shadow='md' borderWidth='1px'>
-                <Heading fontSize='xl'>{post.title}</Heading>
-                <Text mt={4}>{post.textSnippet}</Text>
-                <Text mt={4}>posted by {post.user.username}</Text>
-                <Text mt={4} fontSize={12}>
-                  {new Date(parseInt(post.createdAt)).toLocaleString()}
-                </Text>
-              </Box>
+              <Flex key={post.id} p={5} shadow='md' borderWidth='1px'>
+                <Flex alignItems='center' flexDirection='column' justifyContent='center' mr={4}>
+                  <ChevronUpIcon boxSize={8} />
+                  {post.points}
+                  <ChevronDownIcon boxSize={8} />
+                </Flex>
+                <Box>
+                  <Heading fontSize='xl'>{post.title}</Heading>
+                  <Text mt={4}>{post.textSnippet}</Text>
+                  <Text mt={4}>posted by {post.user.username}</Text>
+                  <Text mt={4} fontSize={12}>
+                    {new Date(parseInt(post.createdAt)).toLocaleString()}
+                  </Text>
+                </Box>
+              </Flex>
             ))}
           </Stack>
           {data && data.posts.hasMore && (

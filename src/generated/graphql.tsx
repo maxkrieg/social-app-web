@@ -244,6 +244,7 @@ export type PostsQuery = {
       updatedAt: string
       title: string
       textSnippet: string
+      points: number
       user: { __typename?: 'User'; id: string; username: string }
     }>
   }
@@ -374,6 +375,7 @@ export const PostsDocument = gql`
         updatedAt
         title
         textSnippet
+        points
         user {
           id
           username
