@@ -247,6 +247,26 @@ export type CurrentUserQuery = {
     | undefined
 }
 
+export type PostQueryVariables = Exact<{
+  id: Scalars['ID']
+}>
+
+export type PostQuery = {
+  __typename?: 'Query'
+  post?:
+    | {
+        __typename?: 'Post'
+        id: string
+        title: string
+        text: string
+        createdAt: string
+        updatedAt: string
+        user: { __typename?: 'User'; id: string; username: string }
+      }
+    | null
+    | undefined
+}
+
 export type PostsQueryVariables = Exact<{
   limit: Scalars['Int']
   cursor?: Maybe<Scalars['String']>
@@ -410,6 +430,25 @@ export function useCurrentUserQuery(
   options: Omit<Urql.UseQueryArgs<CurrentUserQueryVariables>, 'query'> = {}
 ) {
   return Urql.useQuery<CurrentUserQuery>({ query: CurrentUserDocument, ...options })
+}
+export const PostDocument = gql`
+  query Post($id: ID!) {
+    post(id: $id) {
+      id
+      title
+      text
+      createdAt
+      updatedAt
+      user {
+        id
+        username
+      }
+    }
+  }
+`
+
+export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostQuery>({ query: PostDocument, ...options })
 }
 export const PostsDocument = gql`
   query Posts($limit: Int!, $cursor: String) {

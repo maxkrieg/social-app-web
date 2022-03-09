@@ -20,13 +20,11 @@ const Index = () => {
   }
   return (
     <Layout>
-      <Flex align='center'>
-        <Heading>Social App</Heading>
-        <NextLink href='/create-post'>
-          <Link ml='auto'>+ create post</Link>
-        </NextLink>
+      <Flex justifyContent='center'>
+        <Heading mt={5} mb={10} fontSize={28}>
+          All Posts
+        </Heading>
       </Flex>
-      <div style={{ height: '50px' }} />
       {!data && fetching && <div>loading...</div>}
       {data && (
         <>
@@ -35,7 +33,11 @@ const Index = () => {
               <Flex key={post.id} p={5} shadow='md' borderWidth='1px'>
                 <UpvoteSection post={post} />
                 <Box>
-                  <Heading fontSize='xl'>{post.title}</Heading>
+                  <NextLink href='/post/[id]' as={`/post/${post.id}`}>
+                    <Link>
+                      <Heading fontSize='xl'>{post.title}</Heading>
+                    </Link>
+                  </NextLink>
                   <Text mt={4}>{post.textSnippet}</Text>
                   <Text mt={4}>posted by {post.user.username}</Text>
                   <Text mt={4} fontSize={12}>
@@ -57,7 +59,6 @@ const Index = () => {
                 isLoading={fetching}
                 m='auto'
                 my={8}
-                variantColor='teal'
               >
                 load more
               </Button>
