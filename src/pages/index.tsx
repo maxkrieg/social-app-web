@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
 import NextLink from 'next/link'
-import { Box, Button, Flex, Heading, Link, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, IconButton, Link, Stack, Text } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
 
 import Layout from '../components/Layout'
-import { usePostsQuery } from '../generated/graphql'
+import { useCurrentUserQuery, useDeletePostMutation, usePostsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 import { UpvoteSection } from '../components/UpvoteSection'
+import { DeleteIcon } from '@chakra-ui/icons'
 
 const Index = () => {
+  const [{ data: userData }] = useCurrentUserQuery()
+  const [_, deletePost] = useDeletePostMutation()
   const [queryVariables, setQueryVariables] = useState({
     limit: 15,
     cursor: null as string | null
@@ -43,6 +46,19 @@ const Index = () => {
                   <Text mt={4} fontSize={12}>
                     {new Date(parseInt(post.createdAt)).toLocaleString()}
                   </Text>
+                  <IconButton
+                    disabled={userData?.currentUser?.id !== post.user.id}
+                    colorScheme='red'
+                    aria-label='Search database'
+                    size='sm'
+                    icon={<DeleteIcon />}
+                    onClick={async () => {
+                      if (userData?.currentUser?.id !== post.user.id) {
+                        return
+                      }
+                      await deletePost({ id: post.id })
+                    }}
+                  />
                 </Box>
               </Flex>
             ))}
