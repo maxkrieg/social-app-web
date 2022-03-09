@@ -35,7 +35,7 @@ export type Mutation = {
   logout: Scalars['Boolean']
   register: UserResponse
   updatePost?: Maybe<Post>
-  vote: Scalars['Boolean']
+  vote: Scalars['Int']
 }
 
 export type MutationChangePasswordArgs = {
@@ -90,6 +90,7 @@ export type Post = {
   updatedAt: Scalars['String']
   user: User
   userId: Scalars['Float']
+  voteStatus?: Maybe<Scalars['Int']>
 }
 
 export type PostInput = {
@@ -154,6 +155,7 @@ export type PostSnippetFragment = {
   title: string
   textSnippet: string
   points: number
+  voteStatus?: number | null | undefined
   user: { __typename?: 'User'; id: string; username: string }
 }
 
@@ -233,7 +235,7 @@ export type VoteMutationVariables = Exact<{
   postId: Scalars['ID']
 }>
 
-export type VoteMutation = { __typename?: 'Mutation'; vote: boolean }
+export type VoteMutation = { __typename?: 'Mutation'; vote: number }
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never }>
 
@@ -263,6 +265,7 @@ export type PostsQuery = {
       title: string
       textSnippet: string
       points: number
+      voteStatus?: number | null | undefined
       user: { __typename?: 'User'; id: string; username: string }
     }>
   }
@@ -301,6 +304,7 @@ export const PostSnippetFragmentDoc = gql`
     title
     textSnippet
     points
+    voteStatus
     user {
       id
       username

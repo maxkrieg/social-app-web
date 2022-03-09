@@ -1,4 +1,6 @@
+import { VoteMutationVariables } from './../generated/graphql'
 import { devtoolsExchange } from '@urql/devtools'
+import { gql } from '@urql/core'
 import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
 import Router from 'next/router'
 import { dedupExchange, Exchange, fetchExchange, stringifyVariables } from 'urql'
@@ -74,6 +76,25 @@ export const createUrqlClient = (ssrExchange: any) => ({
       },
       updates: {
         Mutation: {
+          vote: (result, args, cache, _info) => {
+            console.log({ result, args })
+            const { postId } = args as VoteMutationVariables
+            const fragment = gql`
+              fragment _ on Post {
+                id
+                points
+                voteStatus
+              }
+            `
+            const postToUpdate = cache.readFragment(fragment, { id: postId })
+            if (postToUpdate && result.vote) {
+              cache.writeFragment(fragment, {
+                id: postId,
+                points: postToUpdate.points + result.vote,
+                voteStatus: args.value
+              })
+            }
+          },
           createPost: (_result, _args, cache, _info) => {
             const allFields = cache.inspectFields('Query')
             const fieldInfos = allFields.filter(info => info.fieldName === 'posts')
