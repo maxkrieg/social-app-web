@@ -32,36 +32,44 @@ const Index = () => {
       {data && (
         <>
           <Stack>
-            {data.posts.posts.map(post => (
-              <Flex key={post.id} p={5} shadow='md' borderWidth='1px'>
-                <UpvoteSection post={post} />
-                <Box>
-                  <NextLink href='/post/[id]' as={`/post/${post.id}`}>
-                    <Link>
-                      <Heading fontSize='xl'>{post.title}</Heading>
-                    </Link>
-                  </NextLink>
-                  <Text mt={4}>{post.textSnippet}</Text>
-                  <Text mt={4}>posted by {post.user.username}</Text>
-                  <Text mt={4} fontSize={12}>
-                    {new Date(parseInt(post.createdAt)).toLocaleString()}
-                  </Text>
-                  <IconButton
-                    disabled={userData?.currentUser?.id !== post.user.id}
-                    colorScheme='red'
-                    aria-label='Search database'
-                    size='sm'
-                    icon={<DeleteIcon />}
-                    onClick={async () => {
-                      if (userData?.currentUser?.id !== post.user.id) {
-                        return
-                      }
-                      await deletePost({ id: post.id })
-                    }}
-                  />
-                </Box>
-              </Flex>
-            ))}
+            {data.posts.posts.map(post => {
+              if (!post) return null
+              const isUserOwnPost = userData?.currentUser?.id === post.user.id
+              return (
+                <Flex key={post.id} p={5} shadow='md' borderWidth='1px'>
+                  <UpvoteSection post={post} />
+                  <Box flex={1}>
+                    <NextLink href='/post/[id]' as={`/post/${post.id}`}>
+                      <Link>
+                        <Heading fontSize='xl'>{post.title}</Heading>
+                      </Link>
+                    </NextLink>
+                    <Text mt={2} fontSize={12}>
+                      posted by {post.user.username} on{' '}
+                      {new Date(parseInt(post.createdAt)).toLocaleString()}
+                    </Text>
+                    <Flex mt={4} align='center'>
+                      <Text>{post.textSnippet}</Text>
+                      {!isUserOwnPost ? null : (
+                        <IconButton
+                          colorScheme='red'
+                          aria-label='Delete post'
+                          size='sm'
+                          ml='auto'
+                          icon={<DeleteIcon />}
+                          onClick={async () => {
+                            if (!isUserOwnPost) {
+                              return
+                            }
+                            await deletePost({ id: post.id })
+                          }}
+                        />
+                      )}
+                    </Flex>
+                  </Box>
+                </Flex>
+              )
+            })}
           </Stack>
           {data && data.posts.hasMore && (
             <Flex>

@@ -1,4 +1,4 @@
-import { VoteMutationVariables } from './../generated/graphql'
+import { DeletePostMutationVariables, VoteMutationVariables } from './../generated/graphql'
 import { devtoolsExchange } from '@urql/devtools'
 import { gql } from '@urql/core'
 import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
@@ -86,6 +86,9 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
         },
         updates: {
           Mutation: {
+            deletePost: (_result, args, cache, _info) => {
+              cache.invalidate({ __typename: 'Post', id: (args as DeletePostMutationVariables).id })
+            },
             vote: (result, args, cache, _info) => {
               console.log({ result, args })
               const { postId } = args as VoteMutationVariables
