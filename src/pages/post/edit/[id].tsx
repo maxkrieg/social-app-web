@@ -1,11 +1,15 @@
-import { Heading, Box, Button } from '@chakra-ui/react'
+import { Heading, Box, Button, Flex } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import { withUrqlClient } from 'next-urql'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { InputField } from '../../../components/InputField'
 import Layout from '../../../components/Layout'
-import { useCurrentUserQuery, useUpdatePostMutation } from '../../../generated/graphql'
+import {
+  useCurrentUserQuery,
+  useDeletePostMutation,
+  useUpdatePostMutation
+} from '../../../generated/graphql'
 import { createUrqlClient } from '../../../utils/createUrqlClient'
 import { isServer } from '../../../utils/isServer'
 import { useGetPost } from '../../../utils/useGetPost'
@@ -19,6 +23,7 @@ const EditPost: React.FC<Props> = () => {
     pause: isServer()
   })
   const [, updatePost] = useUpdatePostMutation()
+  const [, deletePost] = useDeletePostMutation()
   const { post } = data || {}
 
   if (fetching || userDataFetching) {
@@ -53,9 +58,21 @@ const EditPost: React.FC<Props> = () => {
             <Box mt={4}>
               <InputField name='text' label='Body' placeholder='text...' textarea />
             </Box>
-            <Button mt={4} type='submit' isLoading={isSubmitting} colorScheme='teal'>
-              Update
-            </Button>
+            <Flex flex={1}>
+              <Button mt={4} type='submit' isLoading={isSubmitting} colorScheme='teal'>
+                Update
+              </Button>
+              <Button
+                mt={4}
+                ml='auto'
+                onClick={() => {
+                  deletePost({ id: post.id })
+                  router.push('/')
+                }}
+              >
+                Delete
+              </Button>
+            </Flex>
           </Form>
         )}
       </Formik>

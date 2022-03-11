@@ -1,6 +1,7 @@
-import { Heading } from '@chakra-ui/react'
+import { Box, Heading } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
 import React from 'react'
+import { EditDeletePostButtons } from '../../components/EditDeletePostButtons'
 import Layout from '../../components/Layout'
 import { createUrqlClient } from '../../utils/createUrqlClient'
 import { useGetPost } from '../../utils/useGetPost'
@@ -22,7 +23,8 @@ const Post: React.FC<Props> = () => {
   return (
     <Layout>
       <Heading mb={4}>{post.title}</Heading>
-      {post.text}
+      <Box mb={4}>{post.text}</Box>
+      <EditDeletePostButtons postId={post.id} />
     </Layout>
   )
 }
