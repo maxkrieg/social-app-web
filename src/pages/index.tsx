@@ -7,16 +7,16 @@ import Layout from '../components/Layout'
 import { useCurrentUserQuery, useDeletePostMutation, usePostsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 import { UpvoteSection } from '../components/UpvoteSection'
-import { DeleteIcon } from '@chakra-ui/icons'
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons'
 
 const Index = () => {
-  const [{ data: userData }] = useCurrentUserQuery()
-  const [_, deletePost] = useDeletePostMutation()
   const [queryVariables, setQueryVariables] = useState({
     limit: 15,
     cursor: null as string | null
   })
   const [{ data, fetching }] = usePostsQuery({ variables: queryVariables })
+  const [{ data: userData }] = useCurrentUserQuery()
+  const [_, deletePost] = useDeletePostMutation()
 
   if (!fetching && !data) {
     return <div>Error getting posts</div>
@@ -51,19 +51,29 @@ const Index = () => {
                     <Flex mt={4} align='center'>
                       <Text>{post.textSnippet}</Text>
                       {!isUserOwnPost ? null : (
-                        <IconButton
-                          colorScheme='red'
-                          aria-label='Delete post'
-                          size='sm'
-                          ml='auto'
-                          icon={<DeleteIcon />}
-                          onClick={async () => {
-                            if (!isUserOwnPost) {
-                              return
-                            }
-                            await deletePost({ id: post.id })
-                          }}
-                        />
+                        <Box ml='auto'>
+                          <NextLink href='/post/edit/[id]' as={`/post/edit/${post.id}`}>
+                            <IconButton
+                              href={`/post/edit/${post.id}`}
+                              aria-label='Delete post'
+                              size='sm'
+                              icon={<EditIcon />}
+                            />
+                          </NextLink>
+                          <IconButton
+                            colorScheme='red'
+                            aria-label='Delete post'
+                            size='sm'
+                            ml={2}
+                            icon={<DeleteIcon />}
+                            onClick={async () => {
+                              if (!isUserOwnPost) {
+                                return
+                              }
+                              await deletePost({ id: post.id })
+                            }}
+                          />
+                        </Box>
                       )}
                     </Flex>
                   </Box>

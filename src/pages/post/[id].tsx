@@ -1,18 +1,14 @@
 import { Heading } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
-import { useRouter } from 'next/router'
 import React from 'react'
 import Layout from '../../components/Layout'
-import { usePostQuery } from '../../generated/graphql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
+import { useGetPost } from '../../utils/useGetPost'
 
 interface Props {}
 
 const Post: React.FC<Props> = () => {
-  const router = useRouter()
-  const { id } = router.query
-  const parsedId = id && typeof id === 'string' && parseInt(id.toString()) !== NaN ? id : ''
-  const [{ data, fetching }] = usePostQuery({ pause: !parsedId, variables: { id: parsedId } })
+  const [{ data, fetching }] = useGetPost()
 
   const { post } = data || {}
 

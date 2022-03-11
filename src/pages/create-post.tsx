@@ -13,7 +13,7 @@ import { useIsAuth } from '../utils/useIsAuth'
 
 interface Props {}
 
-const CreatPost: NextPage<Props> = () => {
+const CreatePost: NextPage<Props> = () => {
   const router = useRouter()
   useIsAuth()
   const [_, createPost] = useCreatePostMutation()
@@ -48,4 +48,4 @@ const CreatPost: NextPage<Props> = () => {
   )
 }
 
-export default withUrqlClient(createUrqlClient)(CreatPost)
+export default withUrqlClient(createUrqlClient)(CreatePost)
