@@ -6,7 +6,7 @@ import NextLink from 'next/link'
 import { EditDeletePostButtons } from '../components/EditDeletePostButtons'
 import Layout from '../components/Layout'
 import { UpvoteSection } from '../components/UpvoteSection'
-import { useCurrentUserQuery, useDeletePostMutation, usePostsQuery } from '../generated/graphql'
+import { useCurrentUserQuery, usePostsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 
 const Index = () => {
@@ -14,12 +14,11 @@ const Index = () => {
     limit: 15,
     cursor: null as string | null
   })
-  const [{ data, fetching }] = usePostsQuery({ variables: queryVariables })
+  const [{ data, fetching, error }] = usePostsQuery({ variables: queryVariables })
   const [{ data: userData }] = useCurrentUserQuery()
-  const [_, deletePost] = useDeletePostMutation()
 
-  if (!fetching && !data) {
-    return <div>Error getting posts</div>
+  if (!fetching && !data && error) {
+    return <div>Error getting posts: {error?.message}</div>
   }
   return (
     <Layout>
