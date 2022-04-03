@@ -1,7 +1,7 @@
 import { DeletePostMutationVariables, VoteMutationVariables } from './../generated/graphql'
 import { devtoolsExchange } from '@urql/devtools'
 import { gql } from '@urql/core'
-import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
+import { cacheExchange, Resolver, Cache } from '@urql/exchange-graphcache'
 import Router from 'next/router'
 import { dedupExchange, Exchange, fetchExchange, stringifyVariables } from 'urql'
 import { pipe, tap } from 'wonka'
@@ -61,6 +61,15 @@ const cursorPagination = (): Resolver => {
   }
 }
 
+const invalidateAllPosts = (cache: Cache) => {
+  const allFields = cache.inspectFields('Query')
+  const fieldInfos = allFields.filter(info => info.fieldName === 'posts')
+  fieldInfos.forEach(fieldInfo => {
+    const { arguments: fieldArguments } = fieldInfo
+    cache.invalidate('Query', 'posts', fieldArguments)
+  })
+}
+
 export const createUrqlClient = (ssrExchange: any, ctx: any) => {
   let cookie = ''
   if (isServer()) {
@@ -109,12 +118,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
               }
             },
             createPost: (_result, _args, cache, _info) => {
-              const allFields = cache.inspectFields('Query')
-              const fieldInfos = allFields.filter(info => info.fieldName === 'posts')
-              fieldInfos.forEach(fieldInfo => {
-                const { arguments: fieldArguments } = fieldInfo
-                cache.invalidate('Query', 'posts', fieldArguments)
-              })
+              invalidateAllPosts(cache)
             },
             login: (queryResult, _args, cache, _info) => {
               betterUpdateQuery<LoginMutation, CurrentUserQuery>(
@@ -131,6 +135,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                   }
                 }
               )
+              invalidateAllPosts(cache)
             },
             register: (queryResult, _args, cache, _info) => {
               betterUpdateQuery<RegisterMutation, CurrentUserQuery>(

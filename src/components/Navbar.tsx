@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Flex, Link, Button, Heading } from '@chakra-ui/react'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import { useCurrentUserQuery, useLogoutMutation } from '../generated/graphql'
 import { isServer } from '../utils/isServer'
 
@@ -8,12 +9,14 @@ interface Props {}
 
 export const NavBar: React.FC<Props> = () => {
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation()
+  const router = useRouter()
   const [{ data, fetching }] = useCurrentUserQuery({
     pause: isServer()
   })
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
+    router.reload()
   }
 
   let body
