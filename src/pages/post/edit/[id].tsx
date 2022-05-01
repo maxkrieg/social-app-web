@@ -1,4 +1,4 @@
-import { Heading, Box, Button, Flex } from '@chakra-ui/react'
+import { Heading, Box, Button, Flex, useToast } from '@chakra-ui/react'
 import { Formik, Form } from 'formik'
 import { withUrqlClient } from 'next-urql'
 import { useRouter } from 'next/router'
@@ -18,6 +18,7 @@ interface Props {}
 
 const EditPost: React.FC<Props> = () => {
   const router = useRouter()
+  const toast = useToast()
   const [{ data, fetching }] = useGetPost()
   const [{ data: userData, fetching: userDataFetching }] = useCurrentUserQuery({
     pause: isServer()
@@ -48,6 +49,12 @@ const EditPost: React.FC<Props> = () => {
         onSubmit={async values => {
           const { error } = await updatePost({ id: post.id, ...values })
           if (!error) {
+            toast({
+              title: 'Post saved',
+              status: 'success',
+              duration: 3000,
+              isClosable: true
+            })
             router.push('/')
           }
         }}

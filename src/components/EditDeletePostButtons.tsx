@@ -1,5 +1,5 @@
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons'
-import { Box, IconButton } from '@chakra-ui/react'
+import { Box, IconButton, useToast } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import React from 'react'
 
@@ -7,9 +7,11 @@ import { useDeletePostMutation } from '../generated/graphql'
 
 interface Props {
   postId: string
+  onDelete?: () => void
 }
 
-export const EditDeletePostButtons: React.FC<Props> = ({ postId }) => {
+export const EditDeletePostButtons: React.FC<Props> = ({ postId, onDelete = () => {} }) => {
+  const toast = useToast()
   const [_, deletePost] = useDeletePostMutation()
   return (
     <Box>
@@ -26,8 +28,15 @@ export const EditDeletePostButtons: React.FC<Props> = ({ postId }) => {
         size='sm'
         ml={2}
         icon={<DeleteIcon />}
-        onClick={() => {
-          deletePost({ id: postId })
+        onClick={async () => {
+          await deletePost({ id: postId })
+          toast({
+            title: 'Post deleted',
+            status: 'success',
+            duration: 3000,
+            isClosable: true
+          })
+          onDelete()
         }}
       />
     </Box>

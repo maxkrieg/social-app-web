@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Heading } from '@chakra-ui/react'
+import { Box, Button, Heading, useToast } from '@chakra-ui/react'
 import { Form, Formik } from 'formik'
 import { NextPage } from 'next'
 import { withUrqlClient } from 'next-urql'
@@ -14,6 +14,7 @@ import { useIsAuth } from '../utils/useIsAuth'
 interface Props {}
 
 const CreatePost: NextPage<Props> = () => {
+  const toast = useToast()
   const router = useRouter()
   useIsAuth()
   const [_, createPost] = useCreatePostMutation()
@@ -28,6 +29,12 @@ const CreatePost: NextPage<Props> = () => {
         onSubmit={async values => {
           const { error } = await createPost({ input: values })
           if (!error) {
+            toast({
+              title: 'Post created',
+              status: 'success',
+              duration: 3000,
+              isClosable: true
+            })
             router.push('/')
           }
         }}
