@@ -1,0 +1,14 @@
+query Event($id: ID!) {
+  event(id: $id) {
+    id
+    title
+    location
+    description
+    createdAt
+    updatedAt
+    user {
+      id
+      username
+    }
+  }
+}

@@ -258,6 +258,12 @@ export type CreatePostMutation = {
     | undefined
 }
 
+export type DeleteEventMutationVariables = Exact<{
+  id: Scalars['ID']
+}>
+
+export type DeleteEventMutation = { __typename?: 'Mutation'; deleteEvent: boolean }
+
 export type DeletePostMutationVariables = Exact<{
   id: Scalars['ID']
 }>
@@ -300,6 +306,21 @@ export type RegisterMutation = {
   }
 }
 
+export type UpdateEventMutationVariables = Exact<{
+  id: Scalars['ID']
+  title: Scalars['String']
+  location: Scalars['String']
+  description: Scalars['String']
+}>
+
+export type UpdateEventMutation = {
+  __typename?: 'Mutation'
+  updateEvent?:
+    | { __typename?: 'Event'; id: string; title: string; location: string; description: string }
+    | null
+    | undefined
+}
+
 export type UpdatePostMutationVariables = Exact<{
   id: Scalars['ID']
   title: Scalars['String']
@@ -327,6 +348,27 @@ export type CurrentUserQuery = {
   __typename?: 'Query'
   currentUser?:
     | { __typename?: 'User'; id: string; email: string; username: string }
+    | null
+    | undefined
+}
+
+export type EventQueryVariables = Exact<{
+  id: Scalars['ID']
+}>
+
+export type EventQuery = {
+  __typename?: 'Query'
+  event?:
+    | {
+        __typename?: 'Event'
+        id: string
+        title: string
+        location: string
+        description: string
+        createdAt: string
+        updatedAt: string
+        user: { __typename?: 'User'; id: string; username: string }
+      }
     | null
     | undefined
 }
@@ -467,6 +509,15 @@ export const CreatePostDocument = gql`
 export function useCreatePostMutation() {
   return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument)
 }
+export const DeleteEventDocument = gql`
+  mutation DeleteEvent($id: ID!) {
+    deleteEvent(id: $id)
+  }
+`
+
+export function useDeleteEventMutation() {
+  return Urql.useMutation<DeleteEventMutation, DeleteEventMutationVariables>(DeleteEventDocument)
+}
 export const DeletePostDocument = gql`
   mutation DeletePost($id: ID!) {
     deletePost(id: $id)
@@ -520,6 +571,20 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument)
 }
+export const UpdateEventDocument = gql`
+  mutation UpdateEvent($id: ID!, $title: String!, $location: String!, $description: String!) {
+    updateEvent(id: $id, title: $title, location: $location, description: $description) {
+      id
+      title
+      location
+      description
+    }
+  }
+`
+
+export function useUpdateEventMutation() {
+  return Urql.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument)
+}
 export const UpdatePostDocument = gql`
   mutation UpdatePost($id: ID!, $title: String!, $text: String!) {
     updatePost(id: $id, title: $title, text: $text) {
@@ -556,6 +621,26 @@ export function useCurrentUserQuery(
   options: Omit<Urql.UseQueryArgs<CurrentUserQueryVariables>, 'query'> = {}
 ) {
   return Urql.useQuery<CurrentUserQuery>({ query: CurrentUserDocument, ...options })
+}
+export const EventDocument = gql`
+  query Event($id: ID!) {
+    event(id: $id) {
+      id
+      title
+      location
+      description
+      createdAt
+      updatedAt
+      user {
+        id
+        username
+      }
+    }
+  }
+`
+
+export function useEventQuery(options: Omit<Urql.UseQueryArgs<EventQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<EventQuery>({ query: EventDocument, ...options })
 }
 export const PostDocument = gql`
   query Post($id: ID!) {
