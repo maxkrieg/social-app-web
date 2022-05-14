@@ -14,6 +14,24 @@ export type Scalars = {
   Float: number
 }
 
+export type Event = {
+  __typename?: 'Event'
+  createdAt: Scalars['String']
+  description: Scalars['String']
+  id: Scalars['ID']
+  location: Scalars['String']
+  title: Scalars['String']
+  updatedAt: Scalars['String']
+  user: User
+  userId: Scalars['Float']
+}
+
+export type EventInput = {
+  description: Scalars['String']
+  location: Scalars['String']
+  title: Scalars['String']
+}
+
 export type FieldError = {
   __typename?: 'FieldError'
   field: Scalars['String']
@@ -28,12 +46,15 @@ export type LoginInput = {
 export type Mutation = {
   __typename?: 'Mutation'
   changePassword: UserResponse
+  createEvent?: Maybe<Event>
   createPost?: Maybe<Post>
+  deleteEvent: Scalars['Boolean']
   deletePost: Scalars['Boolean']
   forgotPassword: Scalars['Boolean']
   login: UserResponse
   logout: Scalars['Boolean']
   register: UserResponse
+  updateEvent?: Maybe<Event>
   updatePost?: Maybe<Post>
   vote: Scalars['Int']
 }
@@ -43,8 +64,16 @@ export type MutationChangePasswordArgs = {
   token: Scalars['String']
 }
 
+export type MutationCreateEventArgs = {
+  input: EventInput
+}
+
 export type MutationCreatePostArgs = {
   input: PostInput
+}
+
+export type MutationDeleteEventArgs = {
+  id: Scalars['ID']
 }
 
 export type MutationDeletePostArgs = {
@@ -61,6 +90,13 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   options: RegisterInput
+}
+
+export type MutationUpdateEventArgs = {
+  description: Scalars['String']
+  id: Scalars['ID']
+  location: Scalars['String']
+  title: Scalars['String']
 }
 
 export type MutationUpdatePostArgs = {
@@ -102,9 +138,14 @@ export type PostInput = {
 export type Query = {
   __typename?: 'Query'
   currentUser?: Maybe<User>
+  event?: Maybe<Event>
   hello: Scalars['String']
   post?: Maybe<Post>
   posts: PaginatedPosts
+}
+
+export type QueryEventArgs = {
+  id: Scalars['ID']
 }
 
 export type QueryPostArgs = {
@@ -126,6 +167,7 @@ export type User = {
   __typename?: 'User'
   createdAt: Scalars['String']
   email: Scalars['String']
+  events: Array<Event>
   id: Scalars['ID']
   posts: Array<Post>
   updatedAt: Scalars['String']
@@ -172,6 +214,27 @@ export type ChangePasswordMutation = {
     errors?: Array<{ __typename?: 'FieldError'; field: string; message: string }> | null | undefined
     user?: { __typename?: 'User'; id: string; email: string; username: string } | null | undefined
   }
+}
+
+export type CreateEventMutationVariables = Exact<{
+  input: EventInput
+}>
+
+export type CreateEventMutation = {
+  __typename?: 'Mutation'
+  createEvent?:
+    | {
+        __typename?: 'Event'
+        id: string
+        title: string
+        description: string
+        location: string
+        createdAt: string
+        updatedAt: string
+        user: { __typename?: 'User'; id: string }
+      }
+    | null
+    | undefined
 }
 
 export type CreatePostMutationVariables = Exact<{
@@ -365,6 +428,25 @@ export function useChangePasswordMutation() {
   return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(
     ChangePasswordDocument
   )
+}
+export const CreateEventDocument = gql`
+  mutation CreateEvent($input: EventInput!) {
+    createEvent(input: $input) {
+      id
+      title
+      description
+      location
+      createdAt
+      updatedAt
+      user {
+        id
+      }
+    }
+  }
+`
+
+export function useCreateEventMutation() {
+  return Urql.useMutation<CreateEventMutation, CreateEventMutationVariables>(CreateEventDocument)
 }
 export const CreatePostDocument = gql`
   mutation CreatePost($input: PostInput!) {
