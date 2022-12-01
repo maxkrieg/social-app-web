@@ -14,6 +14,7 @@ const Event: React.FC<Props> = () => {
   const [{ data, fetching }] = useGetEvent()
 
   const { event } = data || {}
+  const { id, title, description, location, eventUsers } = event || {}
 
   const onDelete = () => {
     router.push('/')
@@ -23,15 +24,18 @@ const Event: React.FC<Props> = () => {
     return <Layout>Loading...</Layout>
   }
 
-  if (!event) {
+  if (!event || !id) {
     return <Layout>Could not find event</Layout>
   }
+
+  const eventHost = eventUsers?.find(eventUser => eventUser.role === 'host')
   return (
     <Layout>
-      <Heading mb={4}>{event.title}</Heading>
-      <Box mb={4}>{event.location}</Box>
-      <Box mb={4}>{event.description}</Box>
-      <EditDeleteEventButtons eventId={event.id} onDelete={onDelete} />
+      <Heading mb={4}>{title}</Heading>
+      <Box>Host: {eventHost?.user.username}</Box>
+      <Box mb={4}>Location: {location}</Box>
+      <Box mb={4}>Description: {description}</Box>
+      <EditDeleteEventButtons eventId={id} onDelete={onDelete} />
     </Layout>
   )
 }

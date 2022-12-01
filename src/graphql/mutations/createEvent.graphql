@@ -6,8 +6,5 @@ mutation CreateEvent($input: EventInput!) {
     location
     createdAt
     updatedAt
-    user {
-      id
-    }
   }
 }

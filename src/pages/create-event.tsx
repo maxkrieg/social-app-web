@@ -36,6 +36,14 @@ const CreateEvent: NextPage<Props> = () => {
               isClosable: true
             })
             router.push('/')
+          } else {
+            console.error(error)
+            toast({
+              title: 'Error creating event',
+              status: 'error',
+              duration: 3000,
+              isClosable: true
+            })
           }
         }}
       >

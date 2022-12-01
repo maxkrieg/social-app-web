@@ -2,7 +2,9 @@ mutation UpdateEvent($id: ID!, $title: String!, $location: String!, $description
   updateEvent(id: $id, title: $title, location: $location, description: $description) {
     id
     title
-    location
     description
+    location
+    createdAt
+    updatedAt
   }
 }

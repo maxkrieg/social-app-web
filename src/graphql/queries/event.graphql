@@ -6,9 +6,12 @@ query Event($id: ID!) {
     description
     createdAt
     updatedAt
-    user {
-      id
-      username
+    eventUsers {
+      role
+      user {
+        id
+        username
+      }
     }
   }
 }

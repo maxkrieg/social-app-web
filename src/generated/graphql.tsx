@@ -12,24 +12,34 @@ export type Scalars = {
   Boolean: boolean
   Int: number
   Float: number
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any
 }
 
 export type Event = {
   __typename?: 'Event'
   createdAt: Scalars['String']
+  dateTime: Scalars['String']
   description: Scalars['String']
+  eventUsers: Array<EventUser>
   id: Scalars['ID']
   location: Scalars['String']
   title: Scalars['String']
   updatedAt: Scalars['String']
-  user: User
-  userId: Scalars['Float']
 }
 
 export type EventInput = {
+  dateTime: Scalars['DateTime']
   description: Scalars['String']
   location: Scalars['String']
   title: Scalars['String']
+}
+
+export type EventUser = {
+  __typename?: 'EventUser'
+  event: Event
+  role: Scalars['String']
+  user: User
 }
 
 export type FieldError = {
@@ -167,7 +177,6 @@ export type User = {
   __typename?: 'User'
   createdAt: Scalars['String']
   email: Scalars['String']
-  events: Array<Event>
   id: Scalars['ID']
   posts: Array<Post>
   updatedAt: Scalars['String']
@@ -231,7 +240,6 @@ export type CreateEventMutation = {
         location: string
         createdAt: string
         updatedAt: string
-        user: { __typename?: 'User'; id: string }
       }
     | null
     | undefined
@@ -316,7 +324,15 @@ export type UpdateEventMutationVariables = Exact<{
 export type UpdateEventMutation = {
   __typename?: 'Mutation'
   updateEvent?:
-    | { __typename?: 'Event'; id: string; title: string; location: string; description: string }
+    | {
+        __typename?: 'Event'
+        id: string
+        title: string
+        description: string
+        location: string
+        createdAt: string
+        updatedAt: string
+      }
     | null
     | undefined
 }
@@ -367,7 +383,11 @@ export type EventQuery = {
         description: string
         createdAt: string
         updatedAt: string
-        user: { __typename?: 'User'; id: string; username: string }
+        eventUsers: Array<{
+          __typename?: 'EventUser'
+          role: string
+          user: { __typename?: 'User'; id: string; username: string }
+        }>
       }
     | null
     | undefined
@@ -480,9 +500,6 @@ export const CreateEventDocument = gql`
       location
       createdAt
       updatedAt
-      user {
-        id
-      }
     }
   }
 `
@@ -576,8 +593,10 @@ export const UpdateEventDocument = gql`
     updateEvent(id: $id, title: $title, location: $location, description: $description) {
       id
       title
-      location
       description
+      location
+      createdAt
+      updatedAt
     }
   }
 `
@@ -631,9 +650,12 @@ export const EventDocument = gql`
       description
       createdAt
       updatedAt
-      user {
-        id
-        username
+      eventUsers {
+        role
+        user {
+          id
+          username
+        }
       }
     }
   }

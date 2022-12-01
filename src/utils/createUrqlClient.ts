@@ -86,7 +86,8 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
       dedupExchange,
       cacheExchange({
         keys: {
-          PaginatedPosts: () => null
+          PaginatedPosts: () => null,
+          EventUser: data => `${data.userId}-${data.eventId}`
         },
         resolvers: {
           Query: {
