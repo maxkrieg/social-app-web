@@ -381,6 +381,7 @@ export type EventQuery = {
         title: string
         location: string
         description: string
+        dateTime: string
         createdAt: string
         updatedAt: string
         eventUsers: Array<{
@@ -648,6 +649,7 @@ export const EventDocument = gql`
       title
       location
       description
+      dateTime
       createdAt
       updatedAt
       eventUsers {

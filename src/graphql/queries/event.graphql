@@ -4,6 +4,7 @@ query Event($id: ID!) {
     title
     location
     description
+    dateTime
     createdAt
     updatedAt
     eventUsers {

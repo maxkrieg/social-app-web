@@ -6,11 +6,16 @@ import { EditDeleteEventButtons } from '../../components/EditDeleteEventButtons'
 import Layout from '../../components/Layout'
 import { createUrqlClient } from '../../utils/createUrqlClient'
 import { useGetEvent } from '../../utils/useGetEvent'
+import { useCurrentUserQuery } from '../../generated/graphql'
+import { isServer } from '../../utils/isServer'
 
 interface Props {}
 
 const Event: React.FC<Props> = () => {
   const router = useRouter()
+  const [{ data: userData, fetching: userDataFetching }] = useCurrentUserQuery({
+    pause: isServer()
+  })
   const [{ data, fetching }] = useGetEvent()
 
   const { event } = data || {}
@@ -20,7 +25,7 @@ const Event: React.FC<Props> = () => {
     router.push('/')
   }
 
-  if (fetching) {
+  if (fetching || userDataFetching) {
     return <Layout>Loading...</Layout>
   }
 
@@ -35,7 +40,9 @@ const Event: React.FC<Props> = () => {
       <Box>Host: {eventHost?.user.username}</Box>
       <Box mb={4}>Location: {location}</Box>
       <Box mb={4}>Description: {description}</Box>
-      <EditDeleteEventButtons eventId={id} onDelete={onDelete} />
+      {eventHost?.user.id === userData?.currentUser?.id && (
+        <EditDeleteEventButtons eventId={id} onDelete={onDelete} />
+      )}
     </Layout>
   )
 }
