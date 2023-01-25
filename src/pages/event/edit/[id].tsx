@@ -25,7 +25,6 @@ interface EditEventValues {
 }
 
 const EditEvent: React.FC<Props> = () => {
-  console.log('---------------------------------------')
   const router = useRouter()
   const toast = useToast()
   const [{ data, fetching }] = useGetEvent()
@@ -35,8 +34,6 @@ const EditEvent: React.FC<Props> = () => {
   const [, updateEvent] = useUpdateEventMutation()
   const [, deleteEvent] = useDeleteEventMutation()
   const { event } = data || {}
-
-  console.log('event data', event)
 
   const handleUpdateEvent = async (values: EditEventValues) => {
     if (!event) return
@@ -48,7 +45,7 @@ const EditEvent: React.FC<Props> = () => {
         duration: 3000,
         isClosable: true
       })
-      router.push('/')
+      router.push(`/event/${event.id}`)
     } else {
       toast({
         title: 'Error saving event',
@@ -94,9 +91,7 @@ const EditEvent: React.FC<Props> = () => {
   if (eventHost?.user.id !== userData?.currentUser?.id) {
     return <Layout>Not authorized to edit this event</Layout>
   }
-  console.log('event dateTime', event.dateTime)
   const formattedDatetime = format(new Date(event.dateTime), "yyyy-MM-dd'T'HH:mm:ss")
-  console.log({ formattedDatetime })
   return (
     <Layout variant='small'>
       <Heading size='lg' mb={4}>
@@ -113,8 +108,7 @@ const EditEvent: React.FC<Props> = () => {
         }
         onSubmit={handleUpdateEvent}
       >
-        {({ isSubmitting, values }) => {
-          console.log('form values', values)
+        {({ isSubmitting }) => {
           return (
             <Form>
               <InputField name='title' placeholder='Event title' label='Title' />

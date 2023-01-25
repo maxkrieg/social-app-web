@@ -18,14 +18,14 @@ export type Scalars = {
 
 export type Event = {
   __typename?: 'Event'
-  createdAt: Scalars['String']
-  dateTime: Scalars['String']
+  createdAt: Scalars['DateTime']
+  dateTime: Scalars['DateTime']
   description: Scalars['String']
   eventUsers: Array<EventUser>
   id: Scalars['ID']
   location: Scalars['String']
   title: Scalars['String']
-  updatedAt: Scalars['String']
+  updatedAt: Scalars['DateTime']
 }
 
 export type EventInput = {
@@ -103,6 +103,7 @@ export type MutationRegisterArgs = {
 }
 
 export type MutationUpdateEventArgs = {
+  dateTime: Scalars['DateTime']
   description: Scalars['String']
   id: Scalars['ID']
   location: Scalars['String']
@@ -238,8 +239,8 @@ export type CreateEventMutation = {
         title: string
         description: string
         location: string
-        createdAt: string
-        updatedAt: string
+        createdAt: any
+        updatedAt: any
       }
     | null
     | undefined
@@ -319,6 +320,7 @@ export type UpdateEventMutationVariables = Exact<{
   title: Scalars['String']
   location: Scalars['String']
   description: Scalars['String']
+  dateTime: Scalars['DateTime']
 }>
 
 export type UpdateEventMutation = {
@@ -330,8 +332,9 @@ export type UpdateEventMutation = {
         title: string
         description: string
         location: string
-        createdAt: string
-        updatedAt: string
+        createdAt: any
+        updatedAt: any
+        dateTime: any
       }
     | null
     | undefined
@@ -381,9 +384,9 @@ export type EventQuery = {
         title: string
         location: string
         description: string
-        dateTime: string
-        createdAt: string
-        updatedAt: string
+        dateTime: any
+        createdAt: any
+        updatedAt: any
         eventUsers: Array<{
           __typename?: 'EventUser'
           role: string
@@ -590,14 +593,27 @@ export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument)
 }
 export const UpdateEventDocument = gql`
-  mutation UpdateEvent($id: ID!, $title: String!, $location: String!, $description: String!) {
-    updateEvent(id: $id, title: $title, location: $location, description: $description) {
+  mutation UpdateEvent(
+    $id: ID!
+    $title: String!
+    $location: String!
+    $description: String!
+    $dateTime: DateTime!
+  ) {
+    updateEvent(
+      id: $id
+      title: $title
+      location: $location
+      description: $description
+      dateTime: $dateTime
+    ) {
       id
       title
       description
       location
       createdAt
       updatedAt
+      dateTime
     }
   }
 `

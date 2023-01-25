@@ -1,10 +1,23 @@
-mutation UpdateEvent($id: ID!, $title: String!, $location: String!, $description: String!) {
-  updateEvent(id: $id, title: $title, location: $location, description: $description) {
+mutation UpdateEvent(
+  $id: ID!
+  $title: String!
+  $location: String!
+  $description: String!
+  $dateTime: DateTime!
+) {
+  updateEvent(
+    id: $id
+    title: $title
+    location: $location
+    description: $description
+    dateTime: $dateTime
+  ) {
     id
     title
     description
     location
     createdAt
     updatedAt
+    dateTime
   }
 }
