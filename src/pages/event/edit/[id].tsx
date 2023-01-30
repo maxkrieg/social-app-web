@@ -37,42 +37,40 @@ const EditEvent: React.FC<Props> = () => {
 
   const handleUpdateEvent = async (values: EditEventValues) => {
     if (!event) return
-    const { error } = await updateEvent({ id: event.id, ...values })
-    if (!error) {
+    try {
+      const { error } = await updateEvent({ id: event.id, ...values })
+      if (error) {
+        throw new Error('Error updating event')
+      }
       toast({
-        title: 'Event saved',
-        status: 'success',
-        duration: 3000,
-        isClosable: true
+        title: 'Event updated',
+        status: 'success'
       })
       router.push(`/event/${event.id}`)
-    } else {
+    } catch (err: any) {
       toast({
-        title: 'Error saving event',
-        status: 'error',
-        duration: 3000,
-        isClosable: true
+        title: err?.message || 'Error saving event',
+        status: 'error'
       })
     }
   }
 
   const handleDeleteEvent = async () => {
     if (!event) return
-    const { error } = await deleteEvent({ id: event.id })
-    if (!error) {
+    try {
+      const { data, error } = await deleteEvent({ id: event.id })
+      if (!data?.deleteEvent || error) {
+        throw new Error('Error deleting event')
+      }
       toast({
         title: 'Event deleted',
-        status: 'success',
-        duration: 3000,
-        isClosable: true
+        status: 'success'
       })
       router.push('/')
-    } else {
+    } catch (err: any) {
       toast({
-        title: 'Error deleting event',
-        status: 'error',
-        duration: 3000,
-        isClosable: true
+        title: err.message || 'Error deleting event',
+        status: 'error'
       })
     }
   }
@@ -85,12 +83,14 @@ const EditEvent: React.FC<Props> = () => {
     return <Layout>Could not find event</Layout>
   }
 
-  const eventHost = event?.eventUsers.find(
-    eventUser => eventUser.user.id === userData?.currentUser?.id
+  const isCurrentUserHost = event?.eventUsers.some(
+    ({ role, user }) => role === 'host' && user.id === userData?.currentUser?.id
   )
-  if (eventHost?.user.id !== userData?.currentUser?.id) {
+
+  if (!isCurrentUserHost) {
     return <Layout>Not authorized to edit this event</Layout>
   }
+
   const formattedDatetime = format(new Date(event.dateTime), "yyyy-MM-dd'T'HH:mm:ss")
   return (
     <Layout variant='small'>
